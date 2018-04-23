@@ -11,6 +11,7 @@ namespace TicTacTosh
             Board = ClearBoardValues();
             //Decide who goes first 
             //DecideWhoGoesFirst();
+            DisplayHelp();
             PrintBoard();
             //UserMakesMove();
             AIMakeMove();
@@ -32,24 +33,24 @@ namespace TicTacTosh
 
         /* display the grid like this
         * 
-        * X|X|X
-        * X|X|X
-        * X|X|X
-        * 
-        *
+        *  T O|X|O
+        *  M X|O|X
+        *  B O|X|O
+        *    L C R
+        *       
+        *  T LT|CT|RT
+        *  M LM|CM|RM
+        *  B LB|CB|RB
+        *    L  C  R
+        *    
+        *  Help:
+        *  L = Left
+        *  C = Center
+        *  R = Right
+        *  T = Top
+        *  M = Middle
+        *  B = Bottom
         */
-
-        /*
-         *  main()
-         *  {
-         *      ClearBoard();
-         *      do
-         *      {
-         *      
-         *      }
-         *      while(victor || draw
-         *  }
-         */
 
         public static List<List<int>> corners = new List<List<int>>()
         {
@@ -74,9 +75,7 @@ namespace TicTacTosh
 
         public static Boolean AIGoesFirst { get; set; }
 
-        public static List<List<int>> board = new List<List<int>>() { };
-
-        public static List<List<int>> Board { get => board; set => board = value; }
+        public static List<List<int>> Board { get; set; }
 
         public static List<List<int>> Corners { get => corners; set => corners = value; }
 
@@ -133,7 +132,8 @@ namespace TicTacTosh
         public static List<List<int>> ClearBoardValues()
         {
             // set values to {1,1,0} {1,2,0} {1,3,0} {2,1,0} {2,2,0} {2,3,0} {3,1,0} {3,2,0} {3,3,0}
-            Board = new List<List<int>>(){
+            Board = new List<List<int>>()
+            {
                 new List<int>() { 1, 1, 0 },
                 new List<int>() { 1, 2, 0 },
                 new List<int>() { 1, 3, 0 },
@@ -160,7 +160,7 @@ namespace TicTacTosh
             }
             else
             {
-                Console.Write("The AI will go first");
+                Console.Write("The AI will go first.");
                 AIGoesFirst = true;
             }
         }
@@ -173,15 +173,15 @@ namespace TicTacTosh
             {
                 if (count == 0)
                 {
-                    Console.Write("3 ");
+                    Console.Write(" T ");
                 }
                 else if (count == 3 )
                 {
-                    Console.Write("2 ");
+                    Console.Write(" M ");
                 }
                 else if (count == 6)
                 {
-                    Console.Write("1 ");
+                    Console.Write(" B ");
                 }
 
                 if (pos[2] == 0)
@@ -206,19 +206,43 @@ namespace TicTacTosh
                 }
                 else if (count == 9)
                 {
-                    Console.Write("\n  1 2 3\n\n");
+                    Console.Write("\n   L C R\n\n");
                 }
                 else
                 {
                     Console.Write("|");
                 }
             }
-            //Console.WriteLine($"{board[0][2]}|{board[1][2]}|{board[2][2]}");
-            //Console.WriteLine($"{board[3][2]}|{board[4][2]}|{board[5][2]}");
-            //Console.WriteLine($"{board[6][2]}|{board[7][2]}|{board[8][2]}");
         }
 
+        public static void DisplayHelp()
+        {
+            Console.Write("\n Welcome to the help section!\n\n");
+
+            Console.Write("Each section of the board can be selected by a value as shown in the table below");
+            Console.Write(" Top = T  LT|CT|RT  L = Left\n");
+            Console.Write(" Mid = M  LM|CM|RM  C = Center\n");
+            Console.Write(" Bot = B  LB|CB|RB  R = Right\n\n");
+        }
+
+        /*
+         * T LT|CT|RT
+        *  M LM|CM|RM
+        *  B LB|CB|RB
+        *    L  C  R
+        *    
+        *  Help:
+        *  L = Left
+        *  C = Center
+        *  R = Right
+        *  T = Top
+        *  M = Middle
+        *  B = Bottom
+         */
+
         public static void UserMakesMove()
-        { }
+        {
+
+        }
     }
 }
