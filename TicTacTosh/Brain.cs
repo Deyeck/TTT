@@ -9,7 +9,7 @@ namespace TicTacTosh
         public static void Main(string[] args)
         {
             Board = ClearBoardValues();
-            //Decide who goes first
+            //Decide who goes first 
             //DecideWhoGoesFirst();
             PrintBoard();
             //UserMakesMove();
