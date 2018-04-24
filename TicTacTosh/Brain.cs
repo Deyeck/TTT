@@ -13,10 +13,11 @@ namespace TicTacTosh
             //DecideWhoGoesFirst();
             DisplayHelp();
             PrintBoard();
-            //UserMakesMove();
+            GetUsersMove();
+            UserMakesMove();
             AIMakeMove();
             PrintBoard();
-            
+
             Console.ReadLine();
         }
 
@@ -75,6 +76,8 @@ namespace TicTacTosh
 
         public static Boolean AIGoesFirst { get; set; }
 
+        public static List<int> Position { get; set; }
+
         public static List<List<int>> Board { get; set; }
 
         public static List<List<int>> Corners { get => corners; set => corners = value; }
@@ -87,15 +90,15 @@ namespace TicTacTosh
         {
             List<List<int>> board = new List<List<int>>();
             List<List<int>> avaliableSpaces = GetAvaliableSpaces();
-            List<int> position = ChooseRandomPosition(avaliableSpaces);
+            Position = ChooseRandomPosition(avaliableSpaces);
 
-            position[2] = 1;
+            Position[2] = 1;
 
             foreach (var pos in Board)
             {
-                if (pos.ElementAt(0) == position[0] && pos.ElementAt(1) == position[1])
+                if (pos.ElementAt(0) == Position[0] && pos.ElementAt(1) == Position[1])
                 {
-                    pos.Insert(2, position[2]);
+                    pos.Insert(2, Position[2]);
                 }
 
                 board.Add(pos);
@@ -145,6 +148,11 @@ namespace TicTacTosh
                 new List<int>() { 3, 3, 0 }
             };
 
+            Board =
+            {
+                { { } }
+            };
+
             return Board;
         }
 
@@ -160,7 +168,7 @@ namespace TicTacTosh
             }
             else
             {
-                Console.Write("The AI will go first.");
+                Console.Write("The AI will go first");
                 AIGoesFirst = true;
             }
         }
@@ -175,7 +183,7 @@ namespace TicTacTosh
                 {
                     Console.Write(" T ");
                 }
-                else if (count == 3 )
+                else if (count == 3)
                 {
                     Console.Write(" M ");
                 }
@@ -217,12 +225,17 @@ namespace TicTacTosh
 
         public static void DisplayHelp()
         {
-            Console.Write("\n Welcome to the help section!\n\n");
-
-            Console.Write("Each section of the board can be selected by a value as shown in the table below");
-            Console.Write(" Top = T  LT|CT|RT  L = Left\n");
-            Console.Write(" Mid = M  LM|CM|RM  C = Center\n");
-            Console.Write(" Bot = B  LB|CB|RB  R = Right\n\n");
+            Console.Write("\n*************************************************************************************");
+            Console.Write("\n*\t\t\t    Welcome to the help section!\t\t\t    *");
+            Console.Write("\n*************************************************************************************\n");
+            Console.Write("*  Each section of the board can be selected by a value as shown in the table below *\n");
+            Console.Write("*  T = Top\t\t\t\t\t\t\t\t\t    *\n");
+            Console.Write("*  M = Mid \t\tLT | CT | RT\t __\t O | X | O\t\t\t    *\n"); 
+            Console.Write("*  B = Bot \t\tLM | CM | RM\t __\t X | O | X\t\t\t    *\n"); 
+            Console.Write("*  L = Left \t\tLB | CB | RB\t  \t O | X | O\t\t\t    *\n"); 
+            Console.Write("*  C = Center\t\t\t\t\t\t\t\t\t    *\n");
+            Console.Write("*  R = Right\t\t\t\t\t\t\t\t\t    *\n");
+            Console.Write("*************************************************************************************\n\n");
         }
 
         /*
@@ -240,9 +253,80 @@ namespace TicTacTosh
         *  B = Bottom
          */
 
+        public static void GetUsersMove()
+        {
+            Console.Write("Where would you like to go? ");
+            string input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "LT":
+                    Position[0] = 1;
+                    Position[1] = 3;
+                    Position[2] = 2;
+                    break;
+                case "CT":
+                    Position[0] = 2;
+                    Position[1] = 3;
+                    Position[2] = 2;
+                    break;
+                case "RT":
+                    Position[0] = 3;
+                    Position[1] = 3;
+                    Position[2] = 2;
+                    break;
+                case "LM":
+                    Position[0] = 1;
+                    Position[1] = 2;
+                    Position[2] = 2;
+                    break;
+                case "CM":
+                    Position[0] = 2;
+                    Position[1] = 2;
+                    Position[2] = 2;
+                    break;
+                case "RM":
+                    Position[0] = 3;
+                    Position[1] = 2;
+                    Position[2] = 2;
+                    break;
+                case "LB":
+                    Position[0] = 1;
+                    Position[1] = 1;
+                    Position[2] = 2;
+                    break;
+                case "CB":
+                    Position[0] = 2;
+                    Position[1] = 1;
+                    Position[2] = 2;
+                    break;
+                case "RB":
+                    Position[0] = 3;
+                    Position[1] = 1;
+                    Position[2] = 2;
+                    break;
+                default:
+                    Console.Write("This is not a valid move please try again.");
+                    break;
+            }
+        }
+
         public static void UserMakesMove()
         {
+            List<List<int>> board = new List<List<int>>();
+            List<List<int>> avaliableSpaces = GetAvaliableSpaces();
 
+            foreach (var pos in Board)
+            {
+                if (pos.ElementAt(0) == Position[0] && pos.ElementAt(1) == Position[1])
+                {
+                    pos.Insert(2, Position[2]);
+                }
+
+                board.Add(pos);
+
+                Board = board;
+            }
         }
     }
 }
