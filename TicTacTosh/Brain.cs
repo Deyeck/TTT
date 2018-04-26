@@ -9,10 +9,11 @@ namespace TicTacTosh
         public static void Main(string[] args)
         {
             DisplayLogo();
+            AskIfFirstTimePlaying();
+            AskIfYouWantToBeXorO();
             do
             {
                 Board = ClearBoardValues();
-                AskIfFirstTimePlaying();
                 DecideWhoGoesFirst();
                 do
                 {
@@ -22,6 +23,11 @@ namespace TicTacTosh
                         ComputerMakeMove();
                         PrintBoard();
                         AssessVictoryCondition();
+
+                        if (Victor != null)
+                        {
+                            break;
+                        }
                         Console.Write("Your turn.\n\n");
 
                         do
@@ -31,21 +37,27 @@ namespace TicTacTosh
                         } while (!NoSpaces && !PositionAvaliable);
 
                         UserMakesMove();
-                        AssessVictoryCondition();
                         PrintBoard();
+                        AssessVictoryCondition();
                     }
                     else
                     {
+                        PrintBoard();
                         Console.Write("Your turn.\n\n");
                         GetUsersMove();
                         AssertSpaceIsFree();
                         UserMakesMove();
-                        AssessVictoryCondition();
                         PrintBoard();
+                        AssessVictoryCondition();
+
+                        if (Victor != null)
+                        {
+                            break;
+                        }
                         Console.Write("Computer's turn.\n");
                         ComputerMakeMove();
-                        AssessVictoryCondition();
                         PrintBoard();
+                        AssessVictoryCondition();
                     }
 
                 } while (!Victory && !Draw);
@@ -54,22 +66,28 @@ namespace TicTacTosh
                 {
                     Console.Write($"The Computer has won - Better luck next time!\n\n");
                 }
+                else if (Draw)
+                {
+                    Console.Write($"Looks like a draw!\n\n");
+                }
                 else
                 {
                     Console.Write($"You have won - Congratulations!\n\n");
                 }
-                Console.Write("Would you like to play again? (y/n)");
+
+                Console.Write("Would you like to play again? (y/n) ");
                 string decision = Console.ReadLine().ToLower();
 
                 if (decision == "y")
                 {
                     Repeat = true;
-                    Console.Write("\nRestarting...\n");
+                    Console.Write("\nRestarting...\n\n");
                 }
                 else
                 {
                     Repeat = false;
-                    Console.Write("\nGoodbye!\n");
+                    Console.Write("\nGoodbye!\n\n");
+                    Console.ReadLine();
                 }
             } while (Repeat);
         }
@@ -92,6 +110,10 @@ namespace TicTacTosh
 
         public static Boolean PositionAvaliable = true;
 
+        public static String UserPiece { get; set; }
+
+        public static String CompPiece { get; set; }
+
         public static void ComputerMakeMove()
         {
             List<KeyValuePair<string, string>> board = new List<KeyValuePair<string, string>>();
@@ -105,7 +127,7 @@ namespace TicTacTosh
             {
                 if (position.Key == Position.Key)
                 {
-                    updatedPos = new KeyValuePair<string, string>(Position.Key, "X");
+                    updatedPos = new KeyValuePair<string, string>(Position.Key, CompPiece);
                     board.Add(updatedPos);
                 }
                 else
@@ -191,7 +213,7 @@ namespace TicTacTosh
         public static void AskIfFirstTimePlaying()
         {
             string input = "";
-            Console.Write("\nIs this your first time playing? (y/n)");
+            Console.Write("\nIs this your first time playing? (y/n) ");
             input = Console.ReadLine().ToLower();
 
             switch (input)
@@ -222,37 +244,37 @@ namespace TicTacTosh
 
         public static void GetUsersMove()
         {
-            Console.Write("Where would you like to go? ");
-            string input = Console.ReadLine();
+            Console.Write("Where would you like to go? (type 'help' if unsure) ");
+            string input = Console.ReadLine().ToLower();
 
             switch (input)
             {
-                case "LT":
-                    Position = new KeyValuePair<string, string>("LT", "O");
+                case "lt":
+                    Position = new KeyValuePair<string, string>("LT", UserPiece);
                     break;
-                case "CT":
-                    Position = new KeyValuePair<string, string>("CT", "O");
+                case "ct":
+                    Position = new KeyValuePair<string, string>("CT", UserPiece);
                     break;
-                case "RT":
-                    Position = new KeyValuePair<string, string>("RT", "O");
+                case "rt":
+                    Position = new KeyValuePair<string, string>("RT", UserPiece);
                     break;
-                case "LM":
-                    Position = new KeyValuePair<string, string>("LM", "O");
+                case "lm":
+                    Position = new KeyValuePair<string, string>("LM", UserPiece);
                     break;
-                case "CM":
-                    Position = new KeyValuePair<string, string>("CM", "O");
+                case "cm":
+                    Position = new KeyValuePair<string, string>("CM", UserPiece);
                     break;
-                case "RM":
-                    Position = new KeyValuePair<string, string>("RM", "O");
+                case "rm":
+                    Position = new KeyValuePair<string, string>("RM", UserPiece);
                     break;
-                case "LB":
-                    Position = new KeyValuePair<string, string>("LB", "O");
+                case "lb":
+                    Position = new KeyValuePair<string, string>("LB", UserPiece);
                     break;
-                case "CB":
-                    Position = new KeyValuePair<string, string>("CB", "O");
+                case "cb":
+                    Position = new KeyValuePair<string, string>("CB", UserPiece);
                     break;
-                case "RB":
-                    Position = new KeyValuePair<string, string>("RB", "O");
+                case "rb":
+                    Position = new KeyValuePair<string, string>("RB", UserPiece);
                     break;
                 default:
                     Console.Write("\nThis is not a valid move please try again.\n\n");
@@ -283,7 +305,7 @@ namespace TicTacTosh
             }
             else
             { 
-                if (Position.Value == "O")
+                if (Position.Value == UserPiece)
                 {
                     Console.Write("You can't go there, that spot is already taken.\n\n");
                 }
@@ -323,7 +345,7 @@ namespace TicTacTosh
         {
             if (Board[0].Value + Board[1].Value + Board[2].Value == "XXX" || Board[0].Value + Board[1].Value + Board[2].Value == "OOO")
             {
-                if (Board[0].Value + Board[1].Value + Board[2].Value == "XXX")
+                if (Board[0].Value + Board[1].Value + Board[2].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -336,7 +358,7 @@ namespace TicTacTosh
             }
             else if (Board[3].Value + Board[4].Value + Board[5].Value == "XXX" || Board[3].Value + Board[4].Value + Board[5].Value == "OOO")
             {
-                if (Board[3].Value + Board[4].Value + Board[5].Value == "XXX")
+                if (Board[3].Value + Board[4].Value + Board[5].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -349,7 +371,7 @@ namespace TicTacTosh
             }
             else if (Board[6].Value + Board[7].Value + Board[8].Value == "XXX" || Board[6].Value + Board[7].Value + Board[8].Value == "OOO")
             {
-                if (Board[6].Value + Board[7].Value + Board[8].Value == "XXX")
+                if (Board[6].Value + Board[7].Value + Board[8].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -362,7 +384,7 @@ namespace TicTacTosh
             }
             else if (Board[0].Value + Board[3].Value + Board[6].Value == "XXX" || Board[0].Value + Board[3].Value + Board[6].Value == "OOO")
             {
-                if (Board[0].Value + Board[3].Value + Board[6].Value == "XXX")
+                if (Board[0].Value + Board[3].Value + Board[6].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -375,7 +397,7 @@ namespace TicTacTosh
             }
             else if (Board[1].Value + Board[4].Value + Board[7].Value == "XXX" || Board[1].Value + Board[4].Value + Board[7].Value == "OOO")
             {
-                if (Board[1].Value + Board[4].Value + Board[7].Value == "XXX")
+                if (Board[1].Value + Board[4].Value + Board[7].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -388,7 +410,7 @@ namespace TicTacTosh
             }
             else if (Board[2].Value + Board[5].Value + Board[8].Value == "XXX" || Board[2].Value + Board[5].Value + Board[8].Value == "OOO")
             {
-                if (Board[2].Value + Board[5].Value + Board[8].Value == "XXX")
+                if (Board[2].Value + Board[5].Value + Board[8].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -401,7 +423,7 @@ namespace TicTacTosh
             }
             else if (Board[0].Value + Board[4].Value + Board[8].Value == "XXX" || Board[0].Value + Board[4].Value + Board[8].Value == "OOO")
             {
-                if (Board[0].Value + Board[4].Value + Board[8].Value == "XXX")
+                if (Board[0].Value + Board[4].Value + Board[8].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -414,7 +436,7 @@ namespace TicTacTosh
             }
             else if (Board[6].Value + Board[4].Value + Board[2].Value == "XXX" || Board[6].Value + Board[4].Value + Board[2].Value == "OOO")
             {
-                if (Board[6].Value + Board[4].Value + Board[2].Value == "XXX")
+                if (Board[6].Value + Board[4].Value + Board[2].Value == $"{CompPiece}{CompPiece}{CompPiece}")
                 {
                     Victor = "Computer";
                 }
@@ -444,6 +466,34 @@ namespace TicTacTosh
     | | | | (__   | | (_| | (__   | | (_) \__ \ | | |
     |_| |_|\___|  |_|\__,_|\___|  |_|\___/|___/_| |_|");
             Console.Write("\n------------ Created by Kyle Smith - 2018 © ------------\n");
+        }
+
+        public static void AskIfYouWantToBeXorO()
+        {
+            Boolean valid = false;
+
+            do
+            {
+                Console.Write("\nWould you like to be X or O? ");
+                string input = Console.ReadLine().ToLower();
+
+                if (input == "x")
+                {
+                    UserPiece = "X";
+                    CompPiece = "O";
+                    valid = true;
+                }
+                else if (input == "o")
+                {
+                    UserPiece = "O";
+                    CompPiece = "X";
+                    valid = true;
+                }
+                else
+                {
+                    Console.Write($"\nThis is supposed to be X and O not X and {input}... Try again!");
+                }
+            } while (!valid);
         }
     }
 }
