@@ -80,6 +80,9 @@ namespace TicTacTosh
 
                 if (decision == "y")
                 {
+                    Victory = false;
+                    Victor = null;
+                    Draw = false;
                     Repeat = true;
                     Console.Write("\nRestarting...\n\n");
                 }
@@ -188,7 +191,7 @@ namespace TicTacTosh
 
         public static void DecideWhoGoesFirst()
         {
-            Console.Write("Would you like to go first? (y/n)");
+            Console.Write("Would you like to go first? (y/n) ");
             string decision = Console.ReadLine().ToLower();
 
             if (decision == "y")
