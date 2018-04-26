@@ -8,6 +8,7 @@ namespace TicTacTosh
     {
         public static void Main(string[] args)
         {
+            DisplayLogo();
             do
             {
                 Board = ClearBoardValues();
@@ -15,10 +16,10 @@ namespace TicTacTosh
                 DecideWhoGoesFirst();
                 do
                 {
-                    if (AIGoesFirst)
+                    if (ComputerGoesFirst)
                     {
-                        Console.Write("AI's turn.\n");
-                        AIMakeMove();
+                        Console.Write("Computers's turn.\n");
+                        ComputerMakeMove();
                         PrintBoard();
                         AssessVictoryCondition();
                         Console.Write("Your turn.\n\n");
@@ -41,17 +42,17 @@ namespace TicTacTosh
                         UserMakesMove();
                         AssessVictoryCondition();
                         PrintBoard();
-                        Console.Write("AI's turn.\n");
-                        AIMakeMove();
+                        Console.Write("Computer's turn.\n");
+                        ComputerMakeMove();
                         AssessVictoryCondition();
                         PrintBoard();
                     }
 
                 } while (!Victory && !Draw);
 
-                if (Victor == "AI")
+                if (Victor == "Computer")
                 {
-                    Console.Write($"The AI has won - Better luck next time!\n\n");
+                    Console.Write($"The Computer has won - Better luck next time!\n\n");
                 }
                 else
                 {
@@ -73,41 +74,9 @@ namespace TicTacTosh
             } while (Repeat);
         }
 
-        /* Position X, Position Y, State
-        * 
-        * X can be 1 2 3
-        * Y can be 1 2 3
-        * 
-        * States are:
-        * 0 = empty
-        * 1 = X - for AI
-        * 2 = O - for Player 1
-        */
-
-        /* display the grid like this
-        * 
-        *  T O|X|O
-        *  M X|O|X
-        *  B O|X|O
-        *    L C R
-        *       
-        *  T LT|CT|RT
-        *  M LM|CM|RM
-        *  B LB|CB|RB
-        *    L  C  R
-        *    
-        *  Help:
-        *  L = Left
-        *  C = Center
-        *  R = Right
-        *  T = Top
-        *  M = Middle
-        *  B = Bottom
-        */
-
         public static List<KeyValuePair<string, string>> Board { get; set; }
 
-        public static Boolean AIGoesFirst { get; set; }
+        public static Boolean ComputerGoesFirst { get; set; }
 
         public static KeyValuePair<string, string> Position { get; set; }
 
@@ -123,7 +92,7 @@ namespace TicTacTosh
 
         public static Boolean PositionAvaliable = true;
 
-        public static void AIMakeMove()
+        public static void ComputerMakeMove()
         {
             List<KeyValuePair<string, string>> board = new List<KeyValuePair<string, string>>();
             KeyValuePair<string, string> updatedPos = new KeyValuePair<string, string>();
@@ -202,13 +171,13 @@ namespace TicTacTosh
 
             if (decision == "y")
             {
-                AIGoesFirst = false;
+                ComputerGoesFirst = false;
                 Console.Write("\nYou will go first.\n");
             }
             else
             {
-                Console.Write("\nThe AI will go first\n");
-                AIGoesFirst = true;
+                Console.Write("\nThe Computer will go first\n");
+                ComputerGoesFirst = true;
             }
         }
 
@@ -314,7 +283,15 @@ namespace TicTacTosh
             }
             else
             { 
-                Console.Write("You can't go there, that spot is already taken.\n\n");
+                if (Position.Value == "O")
+                {
+                    Console.Write("You can't go there, that spot is already taken.\n\n");
+                }
+                else
+                {
+                    Console.Write("Enter a recognised move to continue.\n\n");
+                }
+                
                 PositionAvaliable = false;
                 Position = new KeyValuePair<string, string>();
             }
@@ -348,7 +325,7 @@ namespace TicTacTosh
             {
                 if (Board[0].Value + Board[1].Value + Board[2].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -361,7 +338,7 @@ namespace TicTacTosh
             {
                 if (Board[3].Value + Board[4].Value + Board[5].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -374,7 +351,7 @@ namespace TicTacTosh
             {
                 if (Board[6].Value + Board[7].Value + Board[8].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -387,7 +364,7 @@ namespace TicTacTosh
             {
                 if (Board[0].Value + Board[3].Value + Board[6].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -400,7 +377,7 @@ namespace TicTacTosh
             {
                 if (Board[1].Value + Board[4].Value + Board[7].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -413,7 +390,7 @@ namespace TicTacTosh
             {
                 if (Board[2].Value + Board[5].Value + Board[8].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -426,7 +403,7 @@ namespace TicTacTosh
             {
                 if (Board[0].Value + Board[4].Value + Board[8].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -439,7 +416,7 @@ namespace TicTacTosh
             {
                 if (Board[6].Value + Board[4].Value + Board[2].Value == "XXX")
                 {
-                    Victor = "AI";
+                    Victor = "Computer";
                 }
                 else
                 {
@@ -456,6 +433,17 @@ namespace TicTacTosh
             {
                 Victory = false;
             }
+        }
+
+        public static void DisplayLogo()
+        {
+            Console.Write(@"  _______       _______         _______        _     
+ |__   __|     |__   __|       |__   __|      | |    TM
+    | |  _  ___   | | __ _  ___   | | ___  ___| |___ 
+    | | (_)/ __|  | |/ _` |/ __|  | |/ _ \/ __| '_  \ 
+    | | | | (__   | | (_| | (__   | | (_) \__ \ | | |
+    |_| |_|\___|  |_|\__,_|\___|  |_|\___/|___/_| |_|");
+            Console.Write("\n------------ Created by Kyle Smith - 2018 © ------------\n");
         }
     }
 }
