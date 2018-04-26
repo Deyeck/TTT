@@ -8,21 +8,69 @@ namespace TicTacTosh
     {
         public static void Main(string[] args)
         {
-            Board = ClearBoardValues();
-            AskIfFirstTimePlaying();
-            DecideWhoGoesFirst();
             do
             {
+                Board = ClearBoardValues();
+                AskIfFirstTimePlaying();
+                DecideWhoGoesFirst();
+                do
+                {
+                    if (AIGoesFirst)
+                    {
+                        Console.Write("AI's turn.\n");
+                        AIMakeMove();
+                        PrintBoard();
+                        AssessVictoryCondition();
+                        Console.Write("Your turn.\n\n");
 
-            } while (!Victory);
-            PrintBoard();
-            GetUsersMove();
-            UserMakesMove();
-            PrintBoard();
-            AIMakeMove();
-            PrintBoard();
+                        do
+                        {
+                            GetUsersMove();
+                            AssertSpaceIsFree();
+                        } while (!NoSpaces && !PositionAvaliable);
 
-            Console.ReadLine();
+                        UserMakesMove();
+                        AssessVictoryCondition();
+                        PrintBoard();
+                    }
+                    else
+                    {
+                        Console.Write("Your turn.\n\n");
+                        GetUsersMove();
+                        AssertSpaceIsFree();
+                        UserMakesMove();
+                        AssessVictoryCondition();
+                        PrintBoard();
+                        Console.Write("AI's turn.\n");
+                        AIMakeMove();
+                        AssessVictoryCondition();
+                        PrintBoard();
+                    }
+
+                } while (!Victory && !Draw);
+
+                if (Victor == "AI")
+                {
+                    Console.Write($"The AI has won - Better luck next time!\n\n");
+                }
+                else
+                {
+                    Console.Write($"You have won - Congratulations!\n\n");
+                }
+                Console.Write("Would you like to play again? (y/n)");
+                string decision = Console.ReadLine().ToLower();
+
+                if (decision == "y")
+                {
+                    Repeat = true;
+                    Console.Write("\nRestarting...\n");
+                }
+                else
+                {
+                    Repeat = false;
+                    Console.Write("\nGoodbye!\n");
+                }
+            } while (Repeat);
         }
 
         /* Position X, Position Y, State
@@ -65,6 +113,16 @@ namespace TicTacTosh
 
         public static Boolean Victory = false;
 
+        public static Boolean Draw = false;
+
+        public static String Victor { get; set; }
+
+        public static Boolean Repeat = true;
+
+        public static Boolean NoSpaces = false;
+
+        public static Boolean PositionAvaliable = true;
+
         public static void AIMakeMove()
         {
             List<KeyValuePair<string, string>> board = new List<KeyValuePair<string, string>>();
@@ -75,7 +133,7 @@ namespace TicTacTosh
             Position = ChooseRandomPosition(avaliableSpaces);
 
             foreach (var position in Board)
-            { 
+            {
                 if (position.Key == Position.Key)
                 {
                     updatedPos = new KeyValuePair<string, string>(Position.Key, "X");
@@ -95,7 +153,7 @@ namespace TicTacTosh
         public static List<KeyValuePair<string, string>> GetAvaliableSpaces()
         {
             List<KeyValuePair<string, string>> spacesAvaliable = new List<KeyValuePair<string, string>>();
-            
+
             foreach (var key in Board)
             {
                 if (key.Value == " ")
@@ -185,14 +243,14 @@ namespace TicTacTosh
             Console.Write("*  Each section of the board can be selected by a value as shown in the table below *\n");
             Console.Write("*  \t\t\t\t\t\t\t\t\t\t    *\n");
             Console.Write("*  T = Top\t\t\t\t\t\t\t\t\t    *\n");
-            Console.Write("*  M = Middle \t\tLT | CT | RT\t __\t O | X | O\t\t\t    *\n"); 
-            Console.Write("*  B = Bottom \t\tLM | CM | RM\t __\t X | O | X\t\t\t    *\n"); 
-            Console.Write("*  L = Left \t\tLB | CB | RB\t  \t O | X | O\t\t\t    *\n"); 
+            Console.Write("*  M = Middle \t\tLT | CT | RT\t __\t O | X | O\t\t\t    *\n");
+            Console.Write("*  B = Bottom \t\tLM | CM | RM\t __\t X | O | X\t\t\t    *\n");
+            Console.Write("*  L = Left \t\tLB | CB | RB\t  \t O | X | O\t\t\t    *\n");
             Console.Write("*  C = Center\t\t\t\t\t\t\t\t\t    *\n");
             Console.Write("*  R = Right\t\t\t\t\t\t\t\t\t    *\n");
             Console.Write("*************************************************************************************\n");
         }
-        
+
         public static void GetUsersMove()
         {
             Console.Write("Where would you like to go? ");
@@ -228,8 +286,37 @@ namespace TicTacTosh
                     Position = new KeyValuePair<string, string>("RB", "O");
                     break;
                 default:
-                    Console.Write("This is not a valid move please try again.");
+                    Console.Write("\nThis is not a valid move please try again.\n\n");
                     break;
+            }
+        }
+
+        public static void AssertSpaceIsFree()
+        {
+            List<KeyValuePair<string, string>> avaliableSpaces = GetAvaliableSpaces();
+            List<String> temp = new List<string>();
+
+            if (avaliableSpaces.Count == 0)
+            {
+                NoSpaces = true;
+                Draw = true;
+                return;
+            }
+
+            foreach (var space in avaliableSpaces)
+            {
+                temp.Add(space.Key);
+            }
+
+            if (temp.Contains(Position.Key))
+            {
+                PositionAvaliable = true;
+            }
+            else
+            { 
+                Console.Write("You can't go there, that spot is already taken.\n\n");
+                PositionAvaliable = false;
+                Position = new KeyValuePair<string, string>();
             }
         }
 
@@ -255,40 +342,120 @@ namespace TicTacTosh
             Position = new KeyValuePair<string, string>();
         }
 
-        public static Boolean AssessVictoryCondition()
+        public static void AssessVictoryCondition()
         {
-            // if any of these are hit 
-            /* 
-            LT
-            LM
-            LB
-           
-            CT
-            CM
-            CB
+            if (Board[0].Value + Board[1].Value + Board[2].Value == "XXX" || Board[0].Value + Board[1].Value + Board[2].Value == "OOO")
+            {
+                if (Board[0].Value + Board[1].Value + Board[2].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
 
-            RT
-            RM
-            RB
+                Victory = true;
+            }
+            else if (Board[3].Value + Board[4].Value + Board[5].Value == "XXX" || Board[3].Value + Board[4].Value + Board[5].Value == "OOO")
+            {
+                if (Board[3].Value + Board[4].Value + Board[5].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
 
-            LT CT RT
+                Victory = true;
+            }
+            else if (Board[6].Value + Board[7].Value + Board[8].Value == "XXX" || Board[6].Value + Board[7].Value + Board[8].Value == "OOO")
+            {
+                if (Board[6].Value + Board[7].Value + Board[8].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
 
-            LM CM RM
+                Victory = true;
+            }
+            else if (Board[0].Value + Board[3].Value + Board[6].Value == "XXX" || Board[0].Value + Board[3].Value + Board[6].Value == "OOO")
+            {
+                if (Board[0].Value + Board[3].Value + Board[6].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
 
-            LB CB RB
+                Victory = true;
+            }
+            else if (Board[1].Value + Board[4].Value + Board[7].Value == "XXX" || Board[1].Value + Board[4].Value + Board[7].Value == "OOO")
+            {
+                if (Board[1].Value + Board[4].Value + Board[7].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
 
-                  RT
-               CM
-            LB
+                Victory = true;
+            }
+            else if (Board[2].Value + Board[5].Value + Board[8].Value == "XXX" || Board[2].Value + Board[5].Value + Board[8].Value == "OOO")
+            {
+                if (Board[2].Value + Board[5].Value + Board[8].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
 
-            LR
-               CM
-                  RB
+                Victory = true;
+            }
+            else if (Board[0].Value + Board[4].Value + Board[8].Value == "XXX" || Board[0].Value + Board[4].Value + Board[8].Value == "OOO")
+            {
+                if (Board[0].Value + Board[4].Value + Board[8].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
 
-            with the value being either XXX or OOO across them all
-            then set victory to true else
-            */
-            return false;
+                Victory = true;
+            }
+            else if (Board[6].Value + Board[4].Value + Board[2].Value == "XXX" || Board[6].Value + Board[4].Value + Board[2].Value == "OOO")
+            {
+                if (Board[6].Value + Board[4].Value + Board[2].Value == "XXX")
+                {
+                    Victor = "AI";
+                }
+                else
+                {
+                    Victor = "User";
+                }
+
+                Victory = true;
+            }
+            else if (GetAvaliableSpaces().Count == 0)
+            {
+                Draw = true;
+            }
+            else
+            {
+                Victory = false;
+            }
         }
     }
 }
