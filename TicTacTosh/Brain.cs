@@ -9,90 +9,9 @@ namespace TicTacTosh
         public static void Main(string[] args)
         {
             DisplayLogo();
+            AskAndSetName();
             AskIfFirstTimePlaying();
-            AskIfYouWantToBeXorO();
-            do
-            {
-                Board = ClearBoardValues();
-                DecideWhoGoesFirst();
-                do
-                {
-                    if (ComputerGoesFirst)
-                    {
-                        Console.Write("Computers's turn.\n");
-                        ComputerMakeMove();
-                        PrintBoard();
-                        AssessVictoryCondition();
-
-                        if (Victor != null)
-                        {
-                            break;
-                        }
-                        Console.Write("Your turn.\n\n");
-
-                        do
-                        {
-                            GetUsersMove();
-                            AssertSpaceIsFree();
-                        } while (!NoSpaces && !PositionAvaliable);
-
-                        UserMakesMove();
-                        PrintBoard();
-                        AssessVictoryCondition();
-                    }
-                    else
-                    {
-                        PrintBoard();
-                        Console.Write("Your turn.\n\n");
-                        GetUsersMove();
-                        AssertSpaceIsFree();
-                        UserMakesMove();
-                        PrintBoard();
-                        AssessVictoryCondition();
-
-                        if (Victor != null)
-                        {
-                            break;
-                        }
-                        Console.Write("Computer's turn.\n");
-                        ComputerMakeMove();
-                        PrintBoard();
-                        AssessVictoryCondition();
-                    }
-
-                } while (!Victory && !Draw);
-
-                if (Victor == "Computer")
-                {
-                    Console.Write($"The Computer has won - Better luck next time!\n\n");
-                }
-                else if (Draw)
-                {
-                    Console.Write($"Looks like a draw!\n\n");
-                }
-                else
-                {
-                    Console.Write($"You have won - Congratulations!\n\n");
-                }
-
-                Console.Write("Would you like to play again? (y/n) ");
-                string decision = Console.ReadLine().ToLower();
-
-                if (decision == "y")
-                {
-                    Victory = false;
-                    Victor = null;
-                    Draw = false;
-                    Repeat = true;
-                    Console.Write("\nRestarting...\n\n");
-                }
-                else
-                {
-                    Repeat = false;
-                    Console.Write("\nGoodbye!\n\n");
-                    Console.ReadLine();
-                }
-            } while (Repeat);
+            StartGame();
         }
 
         public static List<KeyValuePair<string, string>> Board { get; set; }
@@ -116,6 +35,21 @@ namespace TicTacTosh
         public static String UserPiece { get; set; }
 
         public static String CompPiece { get; set; }
+
+        public static String Name { get; set; }
+
+
+        //Board = new List<KeyValuePair<string, string>>()
+        //    {
+        //       new KeyValuePair<string, string>("LT", " "),
+
+        public static List<List<string>> possibleWins = new List<List<String>>
+        {
+            new List<String> { "LT", "CT", "RT"},
+            new List<String> { "LM", "CM", "RM"},
+            new List<String> { "LB", "CB", "RB"},
+            new List<String> { "test", "test", "test"}
+        };
 
         public static void ComputerMakeMove()
         {
@@ -159,6 +93,190 @@ namespace TicTacTosh
             return spacesAvaliable;
         }
 
+        public static void StartGame()
+        {
+            do
+            {
+                Board = ClearBoardValues();
+                AssessComputerPossibleMoves();
+                AskIfYouWantToBeXorO();
+                DecideWhoGoesFirst();
+                do
+                {
+                    if (ComputerGoesFirst)
+                    {
+                        Console.Write("Computers's turn.\n");
+                        ComputerMakeMove();
+                        PrintBoard();
+                        AssessIfVictoryConditionIsMet();
+
+                        if (Victory == true || Draw == true || Victor != null)
+                        {
+                            break;
+                        }
+
+                        Console.Write($"Your turn {Name}.\n\n");
+
+                        do
+                        {
+                            GetUsersMove();
+                            AssertSpaceIsFree();
+                        } while (!NoSpaces && !PositionAvaliable);
+
+                        if (NoSpaces)
+                        {
+                            break;
+                        }
+
+                        UserMakesMove();
+                        PrintBoard();
+                        AssessIfVictoryConditionIsMet();
+
+                        if (Victory == true || Draw == true || Victor != null)
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        PrintBoard();
+                        Console.Write($"Your turn {Name}.\n\n");
+                        GetUsersMove();
+                        AssertSpaceIsFree();
+                        UserMakesMove();
+                        PrintBoard();
+                        AssessIfVictoryConditionIsMet();
+
+                        if (Victory == true || Draw == true || Victor != null)
+                        {
+                            break;
+                        }
+                        Console.Write("Computer's turn.\n");
+                        ComputerMakeMove();
+                        PrintBoard();
+                        AssessIfVictoryConditionIsMet();
+
+                        if (Victory == true || Draw == true || Victor != null)
+                        {
+                            break;
+                        }
+                    }
+
+                } while (!Victory && !Draw);
+
+                DisplayVictoryDrawMessage();
+                AskIfYouWantToPlayAgain();
+
+            } while (Repeat);
+        }
+
+        public static void DisplayVictoryDrawMessage()
+        {
+            if (Victor == "Computer")
+            {
+                Console.Write($"The Computer has won.. TOSH! Better luck next time {Name}!\n\n");
+            }
+            else if (Draw)
+            {
+                Console.Write($"Looks like a draw {Name}!\n\n");
+            }
+            else
+            {
+                Console.Write($"You have won - Congratulations {Name}!\n\n");
+            }
+        }
+
+        public static void AskAndSetName()
+        {
+            Console.Write("\nWelcome! What is your name? ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            string input = Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.White;
+
+            if (input == "kyle" || input == "Kyle")
+            {
+                string pass = "";
+                string correctPass = "elyk";
+                Console.Write("Enter the correct password to use this name: ");
+                ConsoleKeyInfo key;
+
+                do
+                {
+                    key = Console.ReadKey(true);
+
+                    // Backspace Should Not Work
+                    if (key.Key != ConsoleKey.Backspace)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        if (key.KeyChar == 13)
+                        {
+                            // do nothing
+                            Console.ForegroundColor = ConsoleColor.White;
+                            continue;
+                        }
+                        else
+                        {
+                            pass += key.KeyChar;
+                            Console.Write("*");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                    }
+                    else
+                    {
+                        Console.Write("\b");
+                    }
+                }
+                // Stops Receving Keys Once Enter is Pressed
+                while (key.Key != ConsoleKey.Enter);
+
+                if (pass == correctPass)
+                {
+                    Name = input;
+                    Console.Write($"\nWelcome back {Name}!");
+                }
+                else
+                {
+                    Console.Write($"\nThere can be only one!");
+                    Name = "Fake Kyle";
+                }
+            }
+            else
+            {
+                Name = input;
+            }
+        }
+
+        public static void AskIfYouWantToPlayAgain()
+        {
+            Console.Write($"Would you like to play again {Name}? (y/n) ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            string decision = Console.ReadLine().ToLower();
+            Console.ForegroundColor = ConsoleColor.White;
+
+            if (decision == "y")
+            {
+                Victory = false;
+                Victor = null;
+                Draw = false;
+                Repeat = true;
+                Console.Write("\nRestarting...\n\n");
+            }
+            else
+            {
+                Repeat = false;
+                Console.Write($"\nGoodbye {Name}!\n\n");
+                Console.ReadLine();
+            }
+        }
+
+        public static void AssessComputerPossibleMoves()
+        {
+            List<KeyValuePair<string, string>> boardValues = new List<KeyValuePair<string, string>>();
+            string computerPiece = CompPiece;
+            boardValues = Board;
+
+        }
+
         public static KeyValuePair<string, string> ChooseRandomPosition(List<KeyValuePair<string, string>> spacesAvaliable)
         {
             Random rnd = new Random();
@@ -191,8 +309,10 @@ namespace TicTacTosh
 
         public static void DecideWhoGoesFirst()
         {
-            Console.Write("Would you like to go first? (y/n) ");
+            Console.Write($"\nWould you like to go first {Name}? (y/n) ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
             string decision = Console.ReadLine().ToLower();
+            Console.ForegroundColor = ConsoleColor.White;
 
             if (decision == "y")
             {
@@ -201,23 +321,46 @@ namespace TicTacTosh
             }
             else
             {
-                Console.Write("\nThe Computer will go first\n");
+                Console.Write("\nThe Computer will go first.\n");
                 ComputerGoesFirst = true;
             }
         }
 
         public static void PrintBoard()
         {
-            Console.Write($"\n\t{Board[0].Value}|{Board[1].Value}|{Board[2].Value}\n");
+            Console.Write("\n\t");
+            for (int i = 0; i <= Board.Count - 1; i++)
+            {
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"{Board[i].Value}");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                if (i == 0 || i == 1 || i == 3 || i == 4 || i == 6 || i == 7)
+                {
+                    Console.Write("|");
+                }
+
+                if(i == 2 || i == 5 || i == 8)
+                {
+                    Console.Write("\n\t");
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("\n");
+
+            /*
+            Console.Write($"\t{Board[6].Value}|{Board[1].Value}|{Board[2].Value}\n");
             Console.Write($"\t{Board[3].Value}|{Board[4].Value}|{Board[5].Value}\n");
             Console.Write($"\t{Board[6].Value}|{Board[7].Value}|{Board[8].Value}\n\n");
+            */
         }
 
         public static void AskIfFirstTimePlaying()
         {
             string input = "";
-            Console.Write("\nIs this your first time playing? (y/n) ");
+            Console.Write($"\nIs this your first time playing {Name}? (y/n) ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
             input = Console.ReadLine().ToLower();
+            Console.ForegroundColor = ConsoleColor.White;
 
             switch (input)
             {
@@ -231,58 +374,172 @@ namespace TicTacTosh
 
         public static void DisplayHelp()
         {
-            Console.Write("\n*************************************************************************************");
-            Console.Write("\n*\t\t\t    Welcome to the help section!\t\t\t    *");
-            Console.Write("\n*************************************************************************************\n");
-            Console.Write("*  Each section of the board can be selected by a value as shown in the table below *\n");
-            Console.Write("*  \t\t\t\t\t\t\t\t\t\t    *\n");
-            Console.Write("*  T = Top\t\t\t\t\t\t\t\t\t    *\n");
-            Console.Write("*  M = Middle \t\tLT | CT | RT\t __\t O | X | O\t\t\t    *\n");
-            Console.Write("*  B = Bottom \t\tLM | CM | RM\t __\t X | O | X\t\t\t    *\n");
-            Console.Write("*  L = Left \t\tLB | CB | RB\t  \t O | X | O\t\t\t    *\n");
-            Console.Write("*  C = Center\t\t\t\t\t\t\t\t\t    *\n");
-            Console.Write("*  R = Right\t\t\t\t\t\t\t\t\t    *\n");
-            Console.Write("*************************************************************************************\n");
+            Console.Write("\n ************************************************************************************");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\n\t\t\t    Welcome to the help section!\t\t\t    ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write("\n ************************************************************************************\n");
+            Console.Write(" The positions on the board consist of two letters: Eg. ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("LT\n\n");
+            Console.ForegroundColor = ConsoleColor.White; 
+            Console.Write(" The first letter indicates where along the X axis the player would like to go.\n");
+            Console.Write(" The choices being: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("L");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" = ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Left");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(", ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("C");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" = ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Center");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" and ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("R");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" = ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Right");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(".\n\n");
+            Console.Write(" The second letter indicates where along the Y axis the player would like to go.\n");
+            Console.Write(" The choices being: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("T");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" = ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Top");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(", ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("M");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" = ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Middle");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" and ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("B");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" = ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Bottom");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(".\n\n");
+            Console.Write(" The list of possible choices are: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("LT, LM, LB, CT, CM, CB, RT, RM, RB\n\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" You can also type them like this: ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("TL, ML, BL, TC, MC, BC, TR, MR, BR\n\n");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" On the board they are here:\n\n");
+            Console.Write(" LT ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("|");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" CT ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("|");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" RT \n");
+            Console.Write(" LM ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("|");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" CM ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("|");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" RM \n");
+            Console.Write(" LB ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("|");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" CB ");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("|");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" RB \n");
         }
 
         public static void GetUsersMove()
         {
-            Console.Write("Where would you like to go? (type 'help' if unsure) ");
-            string input = Console.ReadLine().ToLower();
+            Boolean moveTaken = false;
 
-            switch (input)
+            do
             {
-                case "lt":
-                    Position = new KeyValuePair<string, string>("LT", UserPiece);
-                    break;
-                case "ct":
-                    Position = new KeyValuePair<string, string>("CT", UserPiece);
-                    break;
-                case "rt":
-                    Position = new KeyValuePair<string, string>("RT", UserPiece);
-                    break;
-                case "lm":
-                    Position = new KeyValuePair<string, string>("LM", UserPiece);
-                    break;
-                case "cm":
-                    Position = new KeyValuePair<string, string>("CM", UserPiece);
-                    break;
-                case "rm":
-                    Position = new KeyValuePair<string, string>("RM", UserPiece);
-                    break;
-                case "lb":
-                    Position = new KeyValuePair<string, string>("LB", UserPiece);
-                    break;
-                case "cb":
-                    Position = new KeyValuePair<string, string>("CB", UserPiece);
-                    break;
-                case "rb":
-                    Position = new KeyValuePair<string, string>("RB", UserPiece);
-                    break;
-                default:
-                    Console.Write("\nThis is not a valid move please try again.\n\n");
-                    break;
-            }
+                Console.Write($"Where would you like to go? (type 'help' if unsure) ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                string input = Console.ReadLine().ToLower();
+                Console.ForegroundColor = ConsoleColor.White;
+
+                switch (input)
+                {
+                    case "lt":
+                    case "tl":
+                        Position = new KeyValuePair<string, string>("LT", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "tc":
+                    case "ct":
+                        Position = new KeyValuePair<string, string>("CT", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "tr":
+                    case "rt":
+                        Position = new KeyValuePair<string, string>("RT", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "ml":
+                    case "lm":
+                        Position = new KeyValuePair<string, string>("LM", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "mc":
+                    case "cm":
+                        Position = new KeyValuePair<string, string>("CM", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "rm":
+                    case "mr":
+                        Position = new KeyValuePair<string, string>("RM", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "bl":
+                    case "lb":
+                        Position = new KeyValuePair<string, string>("LB", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "bc":
+                    case "cb":
+                        Position = new KeyValuePair<string, string>("CB", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "br":
+                    case "rb":
+                        Position = new KeyValuePair<string, string>("RB", UserPiece);
+                        moveTaken = true;
+                        break;
+                    case "help":
+                        DisplayHelp();
+                        PrintBoard();
+                        break;
+                    default:
+                        Console.Write("\nThis is not a valid move please try again.\n\n");
+                        break;
+                }
+            } while (!moveTaken);
         }
 
         public static void AssertSpaceIsFree()
@@ -292,6 +549,7 @@ namespace TicTacTosh
 
             if (avaliableSpaces.Count == 0)
             {
+                PositionAvaliable = false;
                 NoSpaces = true;
                 Draw = true;
                 return;
@@ -307,16 +565,16 @@ namespace TicTacTosh
                 PositionAvaliable = true;
             }
             else
-            { 
+            {
                 if (Position.Value == UserPiece)
                 {
-                    Console.Write("You can't go there, that spot is already taken.\n\n");
+                    Console.Write($"You can't go there {Name}, that spot is already taken!\n\n");
                 }
                 else
                 {
-                    Console.Write("Enter a recognised move to continue.\n\n");
+                    Console.Write("Please enter a recognised move to continue.\n\n");
                 }
-                
+
                 PositionAvaliable = false;
                 Position = new KeyValuePair<string, string>();
             }
@@ -344,7 +602,7 @@ namespace TicTacTosh
             Position = new KeyValuePair<string, string>();
         }
 
-        public static void AssessVictoryCondition()
+        public static void AssessIfVictoryConditionIsMet()
         {
             if (Board[0].Value + Board[1].Value + Board[2].Value == "XXX" || Board[0].Value + Board[1].Value + Board[2].Value == "OOO")
             {
@@ -462,13 +720,16 @@ namespace TicTacTosh
 
         public static void DisplayLogo()
         {
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write(@"  _______       _______         _______        _     
  |__   __|     |__   __|       |__   __|      | |    TM
     | |  _  ___   | | __ _  ___   | | ___  ___| |___ 
     | | (_)/ __|  | |/ _` |/ __|  | |/ _ \/ __| '_  \ 
     | | | | (__   | | (_| | (__   | | (_) \__ \ | | |
     |_| |_|\___|  |_|\__,_|\___|  |_|\___/|___/_| |_|");
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write("\n------------ Created by Kyle Smith - 2018 © ------------\n");
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void AskIfYouWantToBeXorO()
@@ -478,7 +739,10 @@ namespace TicTacTosh
             do
             {
                 Console.Write("\nWould you like to be X or O? ");
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 string input = Console.ReadLine().ToLower();
+                Console.ForegroundColor = ConsoleColor.White;
+
 
                 if (input == "x")
                 {
@@ -494,7 +758,7 @@ namespace TicTacTosh
                 }
                 else
                 {
-                    Console.Write($"\nThis is supposed to be X and O not X and {input}... Try again!");
+                    Console.Write($"\nThis is supposed to be X and O not X and {input} {Name}... Try again!\n");
                 }
             } while (!valid);
         }
