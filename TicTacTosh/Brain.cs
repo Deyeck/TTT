@@ -244,18 +244,25 @@ namespace TicTacTosh
                new KeyValuePair<string, int> ("RB", rightBottom)
             };
 
-            int temp = 0;
+            int baseScore = 0;
 
             foreach (var score in listOfScores)
             {
                 if (score.Value == 0)
                 {
                     listOfNoScores.Add(score);
+                    continue;
                 }
 
-                if (score.Value > temp)
+                if (score.Value != 0 && score.Value == baseScore)
                 {
-                    temp = score.Value;
+                    listOfHighScores.Add(score);
+                }
+
+                if (score.Value > baseScore)
+                {
+                    listOfHighScores.Clear();
+                    baseScore = score.Value;
                     listOfHighScores.Add(score);
                 }
             }
@@ -441,6 +448,8 @@ namespace TicTacTosh
 
                 #endregion
 
+                listOfNoScores = new List<KeyValuePair<string, int>>();
+
                 listOfScores = new List<KeyValuePair<string, int>>
                 {
                    new KeyValuePair<string, int> ("LT", leftTop),
@@ -456,31 +465,33 @@ namespace TicTacTosh
 
                 foreach (var score in listOfScores)
                 {
-                    if (score.Value == 0)
+                    if (score.Value != 0 && score.Value == baseScore)
                     {
-                        listOfNoScores.Add(score);
+                        listOfHighScores.Add(score);
                     }
 
-                    if (score.Value > temp)
+                    if (score.Value > baseScore)
                     {
-                        temp = score.Value;
+                        listOfHighScores.Clear();
+                        baseScore = score.Value;
                         listOfHighScores.Add(score);
                     }
                 }
 
-                int test = 0;
+                baseScore = 0;
 
                 foreach (var score in listOfHighScores)
                 {
-                    if (score.Value > test)
+                    if (score.Value > baseScore)
                     {
-                        test = score.Value;
+                        baseScore = score.Value;
                         BestMove = score.Key;
                     }
                 }
 
-                //ranomIndex = rnd.Next(listOfHighScores.Count());
+                randomIndex = rnd.Next(listOfHighScores.Count());
             }
+
             if (BestMove == null)
             {
                 if (randomIndex == 0)
@@ -489,8 +500,10 @@ namespace TicTacTosh
                     Position = ChooseRandomPosition(avaliableSpaces);
                     return;
                 }
+
                 BestMove = listOfHighScores[randomIndex].Key;
             }
+
             Position = Board.Where(x => x.Key == BestMove).Single();
             BestMove = null;
         }
