@@ -44,13 +44,11 @@ namespace TicTacTosh
 
         public static string BestMove { get; set; }
 
-        public static void AssessComputerBestMove()
+        public static string UserBestMove { get; set; }
+
+        public static List<KeyValuePair<string, int>> FindWinConditionTwoOfThree(string piece)
         {
-            List<List<string>> possibleWins = new List<List<string>>();
             List<KeyValuePair<string, string>> boardValues = new List<KeyValuePair<string, string>>();
-            List<KeyValuePair<string, string>> avaliableSpaces = new List<KeyValuePair<string, string>>();
-        
-            string computerPiece = CompPiece;
             boardValues = Board;
 
             int leftTop = 0;
@@ -63,13 +61,23 @@ namespace TicTacTosh
             int rightMiddle = 0;
             int rightBottom = 0;
 
-            #region get win conditions for 2/3 in a row
+            if (piece.Equals("user"))
+            {
+                if(CompPiece.Equals("X"))
+                {
+                    piece = "O";
+                }
+                else
+                {
+                    piece = "X";
+                }
+            }
 
             //LT + CT + empty RT
             // x|x|
             //  | | 
             //  | |
-            if (boardValues[0].Value == computerPiece && boardValues[1].Value == computerPiece && boardValues[2].Value == " ")
+            if (boardValues[0].Value == piece && boardValues[1].Value == piece && boardValues[2].Value == " ")
             {
                 rightTop++;
             }
@@ -77,7 +85,7 @@ namespace TicTacTosh
             //  | |
             // x|x| 
             //  | |
-            if (boardValues[3].Value == computerPiece && boardValues[4].Value == computerPiece && boardValues[5].Value == " ")
+            if (boardValues[3].Value == piece && boardValues[4].Value == piece && boardValues[5].Value == " ")
             {
                 rightMiddle++;
             }
@@ -85,7 +93,7 @@ namespace TicTacTosh
             //  | |
             //  | | 
             // x|x|
-            if (boardValues[6].Value == computerPiece && boardValues[7].Value == computerPiece && boardValues[8].Value == " ")
+            if (boardValues[6].Value == piece && boardValues[7].Value == piece && boardValues[8].Value == " ")
             {
                 rightBottom++;
             }
@@ -93,7 +101,7 @@ namespace TicTacTosh
             //  |x|x
             //  | | 
             //  | |
-            if (boardValues[0].Value == " " && boardValues[1].Value == computerPiece && boardValues[2].Value == computerPiece)
+            if (boardValues[0].Value == " " && boardValues[1].Value == piece && boardValues[2].Value == piece)
             {
                 leftTop++;
             }
@@ -101,7 +109,7 @@ namespace TicTacTosh
             //  | |
             //  |x|x 
             //  | |
-            if (boardValues[3].Value == " " && boardValues[4].Value == computerPiece && boardValues[5].Value == computerPiece)
+            if (boardValues[3].Value == " " && boardValues[4].Value == piece && boardValues[5].Value == piece)
             {
                 leftMiddle++;
             }
@@ -109,7 +117,7 @@ namespace TicTacTosh
             //  | |
             //  | | 
             //  |x|x
-            if (boardValues[6].Value == " " && boardValues[7].Value == computerPiece && boardValues[8].Value == computerPiece)
+            if (boardValues[6].Value == " " && boardValues[7].Value == piece && boardValues[8].Value == piece)
             {
                 leftBottom++;
             }
@@ -117,7 +125,7 @@ namespace TicTacTosh
             // x| |
             // x| | 
             //  | |
-            if (boardValues[0].Value == computerPiece && boardValues[3].Value == computerPiece && boardValues[6].Value == " ")
+            if (boardValues[0].Value == piece && boardValues[3].Value == piece && boardValues[6].Value == " ")
             {
                 leftBottom++;
             }
@@ -125,7 +133,7 @@ namespace TicTacTosh
             //  |x|
             //  |x| 
             //  | |
-            if (boardValues[1].Value == computerPiece && boardValues[4].Value == computerPiece && boardValues[7].Value == " ")
+            if (boardValues[1].Value == piece && boardValues[4].Value == piece && boardValues[7].Value == " ")
             {
                 centerBottom++;
             }
@@ -133,7 +141,7 @@ namespace TicTacTosh
             //  | |x
             //  | |x
             //  | |
-            if (boardValues[2].Value == computerPiece && boardValues[5].Value == computerPiece && boardValues[8].Value == " ")
+            if (boardValues[2].Value == piece && boardValues[5].Value == piece && boardValues[8].Value == " ")
             {
                 rightBottom++;
             }
@@ -141,7 +149,7 @@ namespace TicTacTosh
             //  | |
             // x| |
             // x| |
-            if (boardValues[0].Value == " " && boardValues[3].Value == computerPiece && boardValues[6].Value == computerPiece)
+            if (boardValues[0].Value == " " && boardValues[3].Value == piece && boardValues[6].Value == piece)
             {
                 leftTop++;
             }
@@ -149,7 +157,7 @@ namespace TicTacTosh
             //  | |
             //  |x|
             //  |x|
-            if (boardValues[1].Value == " " && boardValues[4].Value == computerPiece && boardValues[7].Value == computerPiece)
+            if (boardValues[1].Value == " " && boardValues[4].Value == piece && boardValues[7].Value == piece)
             {
                 centerTop++;
             }
@@ -157,7 +165,7 @@ namespace TicTacTosh
             //  | |
             //  | |x
             //  | |x
-            if (boardValues[2].Value == " " && boardValues[5].Value == computerPiece && boardValues[8].Value == computerPiece)
+            if (boardValues[2].Value == " " && boardValues[5].Value == piece && boardValues[8].Value == piece)
             {
                 rightTop++;
             }
@@ -165,7 +173,7 @@ namespace TicTacTosh
             // x| |
             //  |x|
             //  | |
-            if (boardValues[0].Value == computerPiece && boardValues[4].Value == computerPiece && boardValues[8].Value == " ")
+            if (boardValues[0].Value == piece && boardValues[4].Value == piece && boardValues[8].Value == " ")
             {
                 rightBottom++;
             }
@@ -173,7 +181,7 @@ namespace TicTacTosh
             //  | |x
             //  |x|
             //  | |
-            if (boardValues[2].Value == computerPiece && boardValues[4].Value == computerPiece && boardValues[6].Value == " ")
+            if (boardValues[2].Value == piece && boardValues[4].Value == piece && boardValues[6].Value == " ")
             {
                 leftBottom++;
             }
@@ -181,7 +189,7 @@ namespace TicTacTosh
             //  | |
             //  |x|
             //  | |x
-            if (boardValues[0].Value == "" && boardValues[4].Value == computerPiece && boardValues[8].Value == computerPiece)
+            if (boardValues[0].Value == "" && boardValues[4].Value == piece && boardValues[8].Value == piece)
             {
                 leftTop++;
             }
@@ -189,7 +197,7 @@ namespace TicTacTosh
             //  | |
             //  |x|
             // x| |
-            if (boardValues[2].Value == " " && boardValues[4].Value == computerPiece && boardValues[6].Value == computerPiece)
+            if (boardValues[2].Value == " " && boardValues[4].Value == piece && boardValues[6].Value == piece)
             {
                 rightTop++;
             }
@@ -197,7 +205,7 @@ namespace TicTacTosh
             // x| |
             //  | |
             //  | |x
-            if (boardValues[0].Value == computerPiece && boardValues[4].Value == " " && boardValues[8].Value == computerPiece)
+            if (boardValues[0].Value == piece && boardValues[4].Value == " " && boardValues[8].Value == piece)
             {
                 centerMiddle++;
             }
@@ -205,7 +213,7 @@ namespace TicTacTosh
             //  | |x
             //  | |
             // x| |
-            if (boardValues[2].Value == computerPiece && boardValues[4].Value == " " && boardValues[6].Value == computerPiece)
+            if (boardValues[2].Value == piece && boardValues[4].Value == " " && boardValues[6].Value == piece)
             {
                 centerMiddle++;
             }
@@ -213,7 +221,7 @@ namespace TicTacTosh
             //  |x|
             //  | |
             //  |x|
-            if (boardValues[1].Value == computerPiece && boardValues[4].Value == " " && boardValues[7].Value == computerPiece)
+            if (boardValues[1].Value == piece && boardValues[4].Value == " " && boardValues[7].Value == piece)
             {
                 centerMiddle++;
             }
@@ -221,15 +229,26 @@ namespace TicTacTosh
             //  | |
             // x| |x
             //  | |
-            if (boardValues[3].Value == computerPiece && boardValues[4].Value == " " && boardValues[5].Value == computerPiece)
+            if (boardValues[3].Value == piece && boardValues[4].Value == " " && boardValues[5].Value == piece)
             {
                 centerMiddle++;
             }
-
-            #endregion
-
-            List<KeyValuePair<string, int>> listOfHighScores = new List<KeyValuePair<string, int>>();
-            List<KeyValuePair<string, int>> listOfNoScores = new List<KeyValuePair<string, int>>();
+            // LT + RT + empty CT
+            // X| |x
+            //  | |
+            //  | |
+            if (boardValues[0].Value == piece && boardValues[1].Value == " " && boardValues[2].Value == piece)
+            {
+                centerTop++;
+            }
+            // LB + RB + empty CB
+            //  | |
+            //  | |
+            // x| |x
+            if (boardValues[6].Value == piece && boardValues[7].Value == " " && boardValues[8].Value == piece)
+            {
+                centerBottom++;
+            }
 
             List<KeyValuePair<string, int>> listOfScores = new List<KeyValuePair<string, int>>
             {
@@ -243,6 +262,215 @@ namespace TicTacTosh
                new KeyValuePair<string, int> ("RM", rightMiddle),
                new KeyValuePair<string, int> ("RB", rightBottom)
             };
+
+            return listOfScores;
+        }
+
+        public static List<KeyValuePair<string, int>> FindWinConditionOneOfThree(string piece)
+        {
+            List<KeyValuePair<string, string>> boardValues = new List<KeyValuePair<string, string>>();
+
+            boardValues = Board;
+
+            // reset scores
+            int leftTop = 0;
+            int leftMiddle = 0;
+            int leftBottom = 0;
+            int centerTop = 0;
+            int centerMiddle = 0;
+            int centerBottom = 0;
+            int rightTop = 0;
+            int rightMiddle = 0;
+            int rightBottom = 0;
+
+            //LT + empty CT + empty RT || LT + empty LM + empty LB || LT + empty CM + empty RB
+            // x| |
+            //  | | 
+            //  | |
+            if (boardValues[0].Value == piece && boardValues[1].Value == " " && boardValues[2].Value == " ")
+            {
+                rightTop++;
+                centerTop++;
+            }
+            if (boardValues[0].Value == piece && boardValues[3].Value == " " && boardValues[6].Value == " ")
+            {
+                leftMiddle++;
+                leftBottom++;
+            }
+            if (boardValues[0].Value == piece && boardValues[4].Value == " " && boardValues[8].Value == " ")
+            {
+                centerMiddle++;
+                rightBottom++;
+            }
+            //LM + empty LT + empty RT || LM + empty CM + empty CB
+            //  |x|
+            //  | | 
+            //  | |
+            if (boardValues[0].Value == " " && boardValues[1].Value == piece && boardValues[2].Value == " ")
+            {
+                leftTop++;
+                rightTop++;
+            }
+            if (boardValues[1].Value == piece && boardValues[4].Value == " " && boardValues[7].Value == " ")
+            {
+                centerMiddle++;
+                centerBottom++;
+            }
+            //RT + empty LT + empty CT || RT + empty CM + empty LB || RT + empty RM + empty RB
+            //  | |x
+            //  | | 
+            //  | |
+            if (boardValues[0].Value == " " && boardValues[1].Value == " " && boardValues[2].Value == piece)
+            {
+                leftTop++;
+                centerTop++;
+            }
+            if (boardValues[2].Value == piece && boardValues[4].Value == " " && boardValues[6].Value == " ")
+            {
+                centerMiddle++;
+                leftBottom++;
+            }
+            if (boardValues[2].Value == piece && boardValues[5].Value == " " && boardValues[8].Value == " ")
+            {
+                rightMiddle++;
+                rightBottom++;
+            }
+            // LM + empty LT + empty LB || LM + empty CM + empty RM
+            //  | |
+            // x| | 
+            //  | |
+            if (boardValues[0].Value == " " && boardValues[3].Value == piece && boardValues[6].Value == " ")
+            {
+                leftTop++;
+                leftBottom++;
+            }
+            if (boardValues[3].Value == piece && boardValues[4].Value == " " && boardValues[5].Value == " ")
+            {
+                centerMiddle++;
+                rightMiddle++;
+            }
+            // CM + empty LT + empty RB || CM + empty CT + empty CB || CM + empty RT + empty LB || CM + empty LM + empty RM
+            //  | |
+            //  |x| 
+            //  | |
+            if (boardValues[0].Value == " " && boardValues[4].Value == piece && boardValues[8].Value == " ")
+            {
+                leftTop++;
+                rightBottom++;
+            }
+            if (boardValues[1].Value == " " && boardValues[4].Value == " " && boardValues[7].Value == " ")
+            {
+                centerTop++;
+                centerBottom++;
+            }
+            if (boardValues[2].Value == " " && boardValues[4].Value == piece && boardValues[6].Value == " ")
+            {
+                rightTop++;
+                leftBottom++;
+            }
+            if (boardValues[3].Value == " " && boardValues[4].Value == " " && boardValues[5].Value == " ")
+            {
+                leftMiddle++;
+                rightMiddle++;
+            }
+            // RM + empty RT + empty RB || RM + empty LM + empty CM
+            //  | |
+            //  | |x
+            //  | |
+            if (boardValues[2].Value == " " && boardValues[5].Value == piece && boardValues[8].Value == " ")
+            {
+                rightTop++;
+                rightBottom++;
+            }
+            if (boardValues[3].Value == " " && boardValues[4].Value == " " && boardValues[5].Value == piece)
+            {
+                leftMiddle++;
+                centerMiddle++;
+            }
+            // LB + empty LM + empty LT || LB + empty CM + empty RT || LB + empty CB + empty RB
+            //  | |
+            //  | | 
+            // x| |
+            if (boardValues[6].Value == piece && boardValues[3].Value == " " && boardValues[0].Value == " ")
+            {
+                leftTop++;
+                leftMiddle++;
+            }
+            if (boardValues[6].Value == piece && boardValues[4].Value == " " && boardValues[2].Value == " ")
+            {
+                centerMiddle++;
+                rightTop++;
+            }
+            if (boardValues[6].Value == piece && boardValues[7].Value == " " && boardValues[8].Value == " ")
+            {
+                centerBottom++;
+                rightBottom++;
+            }
+            // CB + empty LB + empty RB || CB + empty CM + empty CT
+            //  | |
+            //  | | 
+            //  |x|
+            if (boardValues[6].Value == " " && boardValues[7].Value == piece && boardValues[8].Value == " ")
+            {
+                leftBottom++;
+                rightBottom++;
+            }
+            if (boardValues[1].Value == " " && boardValues[4].Value == " " && boardValues[7].Value == piece)
+            {
+                centerMiddle++;
+                centerTop++;
+            }
+            // RB + empty RM + empty RT || RB + empty LT + empty CM || RB + empty CB  + empty LB
+            //  | |
+            //  | |
+            //  | |x
+            if (boardValues[8].Value == piece && boardValues[5].Value == " " && boardValues[2].Value == " ")
+            {
+                leftTop++;
+                leftMiddle++;
+            }
+            if (boardValues[8].Value == piece && boardValues[0].Value == " " && boardValues[4].Value == " ")
+            {
+                leftTop++;
+                centerMiddle++;
+            }
+            if (boardValues[8].Value == piece && boardValues[6].Value == " " && boardValues[7].Value == " ")
+            {
+                leftBottom++;
+                centerBottom++;
+            }
+
+            List<KeyValuePair<string, int>> listOfScores = new List<KeyValuePair<string, int>>
+            {
+               new KeyValuePair<string, int> ("LT", leftTop),
+               new KeyValuePair<string, int> ("LM", leftMiddle),
+               new KeyValuePair<string, int> ("LB", leftBottom),
+               new KeyValuePair<string, int> ("CT", centerTop),
+               new KeyValuePair<string, int> ("CM", centerMiddle),
+               new KeyValuePair<string, int> ("CB", centerBottom),
+               new KeyValuePair<string, int> ("RT", rightTop),
+               new KeyValuePair<string, int> ("RM", rightMiddle),
+               new KeyValuePair<string, int> ("RB", rightBottom)
+            };
+
+            return listOfScores;
+        }
+
+
+        public static void AssessComputerBestMove()
+        {
+            List<List<string>> possibleWins = new List<List<string>>();
+            List<KeyValuePair<string, string>> boardValues = new List<KeyValuePair<string, string>>();
+            List<KeyValuePair<string, string>> avaliableSpaces = new List<KeyValuePair<string, string>>();
+
+            string computerPiece = CompPiece;
+            boardValues = Board;
+
+            List<KeyValuePair<string, int>> listOfHighScores = new List<KeyValuePair<string, int>>();
+            List<KeyValuePair<string, int>> listOfNoScores = new List<KeyValuePair<string, int>>();
+            List<KeyValuePair<string, int>> listOfScores = new List<KeyValuePair<string, int>>();
+
+            listOfScores = FindWinConditionTwoOfThree(computerPiece);
 
             int baseScore = 0;
 
@@ -270,198 +498,13 @@ namespace TicTacTosh
             Random rnd = new Random();
             int randomIndex = rnd.Next(listOfHighScores.Count());
 
-            #region moves where 1/3 are present
-
             if (listOfNoScores.Count() == 9)
             {
                 // no win conditions so far in the game, have to choose a different way to select next best move
 
                 listOfHighScores.Clear();
-
-                // reset scores
-                leftTop = 0;
-                leftMiddle = 0;
-                leftBottom = 0;
-                centerTop = 0;
-                centerMiddle = 0;
-                centerBottom = 0;
-                rightTop = 0;
-                rightMiddle = 0;
-                rightBottom = 0;
-
-                //LT + empty CT + empty RT || LT + empty LM + empty LB || LT + empty CM + empty RB
-                // x| |
-                //  | | 
-                //  | |
-                if (boardValues[0].Value == computerPiece && boardValues[1].Value == " " && boardValues[2].Value == " ")
-                {
-                    rightTop++;
-                    centerTop++;
-                }
-                if (boardValues[0].Value == computerPiece && boardValues[3].Value == " " && boardValues[6].Value == " ")
-                {
-                    leftMiddle++;
-                    leftBottom++;
-                }
-                if (boardValues[0].Value == computerPiece && boardValues[4].Value == " " && boardValues[8].Value == " ")
-                {
-                    centerMiddle++;
-                    rightBottom++;
-                }
-                //LM + empty LT + empty RT || LM + empty CM + empty CB
-                //  |x|
-                //  | | 
-                //  | |
-                if (boardValues[0].Value == " " && boardValues[1].Value == computerPiece && boardValues[2].Value == " ")
-                {
-                    leftTop++;
-                    rightTop++;
-                }
-                if (boardValues[1].Value == computerPiece && boardValues[4].Value == " " && boardValues[7].Value == " ")
-                {
-                    centerMiddle++;
-                    centerBottom++;
-                }
-                //RT + empty LT + empty CT || RT + empty CM + empty LB || RT + empty RM + empty RB
-                //  | |x
-                //  | | 
-                //  | |
-                if (boardValues[0].Value == " " && boardValues[1].Value == " " && boardValues[2].Value == computerPiece)
-                {
-                    leftTop++;
-                    centerTop++;
-                }
-                if (boardValues[2].Value == computerPiece && boardValues[4].Value == " " && boardValues[6].Value == " ")
-                {
-                    centerMiddle++;
-                    leftBottom++;
-                }
-                if (boardValues[2].Value == computerPiece && boardValues[5].Value == " " && boardValues[8].Value == " ")
-                {
-                    rightMiddle++;
-                    rightBottom++;
-                }
-                // LM + empty LT + empty LB || LM + empty CM + empty RM
-                //  | |
-                // x| | 
-                //  | |
-                if (boardValues[0].Value == " " && boardValues[3].Value == computerPiece && boardValues[6].Value == " ")
-                {
-                    leftTop++;
-                    leftBottom++;
-                }
-                if (boardValues[3].Value == computerPiece && boardValues[4].Value == " " && boardValues[5].Value == " ")
-                {
-                    centerMiddle++;
-                    rightMiddle++;
-                }
-                // CM + empty LT + empty RB || CM + empty CT + empty CB || CM + empty RT + empty LB || CM + empty LM + empty RM
-                //  | |
-                //  |x| 
-                //  | |
-                if (boardValues[0].Value == " " && boardValues[4].Value == computerPiece && boardValues[8].Value == " ")
-                {
-                    leftTop++;
-                    rightBottom++;
-                }
-                if (boardValues[1].Value == " " && boardValues[4].Value == " " && boardValues[7].Value == " ")
-                {
-                    centerTop++;
-                    centerBottom++;
-                }
-                if (boardValues[2].Value == " " && boardValues[4].Value == computerPiece && boardValues[6].Value == " ")
-                {
-                    rightTop++;
-                    leftBottom++;
-                }
-                if (boardValues[3].Value == " " && boardValues[4].Value == " " && boardValues[5].Value == " ")
-                {
-                    leftMiddle++;
-                    rightMiddle++;
-                }
-                // RM + empty RT + empty RB || RM + empty LM + empty CM
-                //  | |
-                //  | |x
-                //  | |
-                if (boardValues[2].Value == " " && boardValues[5].Value == computerPiece && boardValues[8].Value == " ")
-                {
-                    rightTop++;
-                    rightBottom++;
-                }
-                if (boardValues[3].Value == " " && boardValues[4].Value == " " && boardValues[5].Value == computerPiece)
-                {
-                    leftMiddle++;
-                    centerMiddle++;
-                }
-                // LB + empty LM + empty LT || LB + empty CM + empty RT || LB + empty CB + empty RB
-                //  | |
-                //  | | 
-                // x| |
-                if (boardValues[6].Value == computerPiece && boardValues[3].Value == " " && boardValues[0].Value == " ")
-                {
-                    leftTop++;
-                    leftMiddle++;
-                }
-                if (boardValues[6].Value == computerPiece && boardValues[4].Value == " " && boardValues[2].Value == " ")
-                {
-                    centerMiddle++;
-                    rightTop++;
-                }
-                if (boardValues[6].Value == computerPiece && boardValues[7].Value == " " && boardValues[8].Value == " ")
-                {
-                    centerBottom++;
-                    rightBottom++;
-                }
-                // CB + empty LB + empty RB || CB + empty CM + empty CT
-                //  | |
-                //  | | 
-                //  |x|
-                if (boardValues[6].Value == " " && boardValues[7].Value == computerPiece && boardValues[8].Value == " ")
-                {
-                    leftBottom++;
-                    rightBottom++;
-                }
-                if (boardValues[1].Value == " " && boardValues[4].Value == " " && boardValues[7].Value == computerPiece)
-                {
-                    centerMiddle++;
-                    centerTop++;
-                }
-                // RB + empty RM + empty RT || RB + empty LT + empty CM || RB + empty CB  + empty LB
-                //  | |
-                //  | |
-                //  | |x
-                if (boardValues[8].Value == computerPiece && boardValues[5].Value == " " && boardValues[2].Value == " ")
-                {
-                    leftTop++;
-                    leftMiddle++;
-                }
-                if (boardValues[8].Value == computerPiece && boardValues[0].Value == " " && boardValues[4].Value == " ")
-                {
-                    leftTop++;
-                    centerMiddle++;
-                }
-                if (boardValues[8].Value == computerPiece && boardValues[6].Value == " " && boardValues[7].Value == " ")
-                {
-                    leftBottom++;
-                    centerBottom++;
-                }
-
-                #endregion
-
-                listOfNoScores = new List<KeyValuePair<string, int>>();
-
-                listOfScores = new List<KeyValuePair<string, int>>
-                {
-                   new KeyValuePair<string, int> ("LT", leftTop),
-                   new KeyValuePair<string, int> ("LM", leftMiddle),
-                   new KeyValuePair<string, int> ("LB", leftBottom),
-                   new KeyValuePair<string, int> ("CT", centerTop),
-                   new KeyValuePair<string, int> ("CM", centerMiddle),
-                   new KeyValuePair<string, int> ("CB", centerBottom),
-                   new KeyValuePair<string, int> ("RT", rightTop),
-                   new KeyValuePair<string, int> ("RM", rightMiddle),
-                   new KeyValuePair<string, int> ("RB", rightBottom)
-                };
+                listOfScores = FindWinConditionOneOfThree(computerPiece);
+                //listOfNoScores = new List<KeyValuePair<string, int>>();
 
                 foreach (var score in listOfScores)
                 {
@@ -502,6 +545,55 @@ namespace TicTacTosh
                 }
 
                 BestMove = listOfHighScores[randomIndex].Key;
+            }
+
+            //if user move will win then take this place instead of the best move
+            UserBestMove = "none";
+            List<KeyValuePair<string, int>> listOfUserScores = new List<KeyValuePair<string, int>>();
+            List<KeyValuePair<string, int>> listOfUserHighScores = new List<KeyValuePair<string, int>>();
+
+            List<KeyValuePair<string, int>> listOfUserNoScores = new List<KeyValuePair<string, int>>();
+            int baseUserScore = 0;
+            listOfUserScores = FindWinConditionTwoOfThree("user");
+
+            foreach (var score in listOfUserScores)
+            {
+                if (score.Value == 0)
+                {
+                    listOfUserNoScores.Add(score);
+                    continue;
+                }
+
+                if (score.Value != 0 && score.Value == baseUserScore)
+                {
+                    listOfUserHighScores.Add(score);
+                }
+
+                if (score.Value > baseUserScore)
+                {
+                    listOfUserHighScores.Clear();
+                    baseUserScore = score.Value;
+                    listOfUserHighScores.Add(score);
+                }
+            }
+
+            int randomIndexForUser = 0;
+
+            if (listOfUserNoScores.Count() != 9)
+            {
+                randomIndexForUser = rnd.Next(listOfUserHighScores.Count());
+
+                UserBestMove = listOfUserHighScores[randomIndexForUser].Key;
+
+                if (!UserBestMove.Equals("none"))
+                {
+                    BestMove = UserBestMove;
+                }
+            }
+            
+            if (!UserBestMove.Equals("none"))
+            {
+                BestMove = UserBestMove;
             }
 
             Position = Board.Where(x => x.Key == BestMove).Single();
@@ -888,7 +980,7 @@ namespace TicTacTosh
             Console.Write(" The positions on the board consist of two letters: Eg. ");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("LT\n\n");
-            Console.ForegroundColor = ConsoleColor.White; 
+            Console.ForegroundColor = ConsoleColor.White;
             Console.Write(" The first letter indicates where along the X axis the player would like to go.\n");
             Console.Write(" The choices being: ");
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -1106,7 +1198,7 @@ namespace TicTacTosh
                     Console.Write("|");
                 }
 
-                if(i == 2 || i == 5 || i == 8)
+                if (i == 2 || i == 5 || i == 8)
                 {
                     Console.Write("\n\t");
                 }
@@ -1214,5 +1306,5 @@ namespace TicTacTosh
 
             Position = new KeyValuePair<string, string>();
         }
-    }
+    } 
 }
