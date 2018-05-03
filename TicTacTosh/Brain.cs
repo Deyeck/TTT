@@ -6,6 +6,8 @@ namespace TicTacTosh
 {
     public class Brain
     {
+        const string fucks = "None";
+
         public static void Main(string[] args)
         {
             DisplayLogo();
@@ -44,7 +46,17 @@ namespace TicTacTosh
 
         public static string BestMove { get; set; }
 
+        public static string ComputerBestMove { get; set; }
+
+        public static string ComputerGoodMove { get; set; }
+
+        public static string ComputerRandomPosition { get; set; }
+
         public static string UserBestMove { get; set; }
+
+        public static string UserGoodMove { get; set; }
+
+        public static string UserRandomPosition { get; set; }
 
         public static List<KeyValuePair<string, int>> FindWinConditionTwoOfThree(string piece)
         {
@@ -225,6 +237,22 @@ namespace TicTacTosh
             {
                 centerMiddle++;
             }
+            // LT + LB + empty LM
+            // x| |
+            //  | |
+            // x| |
+            if (boardValues[0].Value == piece && boardValues[3].Value == " " && boardValues[6].Value == piece)
+            {
+                leftMiddle++;
+            }
+            // RT + RB + empty RM
+            //  | |x
+            //  | |
+            //  | |x
+            if (boardValues[2].Value == piece && boardValues[5].Value == " " && boardValues[8].Value == piece)
+            {
+                rightMiddle++;
+            }
             // LM + RM + empty CM
             //  | |
             // x| |x
@@ -268,7 +296,20 @@ namespace TicTacTosh
 
         public static List<KeyValuePair<string, int>> FindWinConditionOneOfThree(string piece)
         {
+
             List<KeyValuePair<string, string>> boardValues = new List<KeyValuePair<string, string>>();
+
+            if (piece.Equals("user"))
+            {
+                if (CompPiece.Equals("X"))
+                {
+                    piece = "O";
+                }
+                else
+                {
+                    piece = "X";
+                }
+            }
 
             boardValues = Board;
 
@@ -358,7 +399,7 @@ namespace TicTacTosh
                 leftTop++;
                 rightBottom++;
             }
-            if (boardValues[1].Value == " " && boardValues[4].Value == " " && boardValues[7].Value == " ")
+            if (boardValues[1].Value == " " && boardValues[4].Value == piece && boardValues[7].Value == " ")
             {
                 centerTop++;
                 centerBottom++;
@@ -368,7 +409,7 @@ namespace TicTacTosh
                 rightTop++;
                 leftBottom++;
             }
-            if (boardValues[3].Value == " " && boardValues[4].Value == " " && boardValues[5].Value == " ")
+            if (boardValues[3].Value == " " && boardValues[4].Value == piece && boardValues[5].Value == " ")
             {
                 leftMiddle++;
                 rightMiddle++;
@@ -459,6 +500,7 @@ namespace TicTacTosh
 
         public static void AssessComputerBestMove()
         {
+            Random rnd = new Random();
             List<List<string>> possibleWins = new List<List<string>>();
             List<KeyValuePair<string, string>> boardValues = new List<KeyValuePair<string, string>>();
             List<KeyValuePair<string, string>> avaliableSpaces = new List<KeyValuePair<string, string>>();
@@ -467,7 +509,6 @@ namespace TicTacTosh
             boardValues = Board;
 
             List<KeyValuePair<string, int>> listOfHighScores = new List<KeyValuePair<string, int>>();
-            List<KeyValuePair<string, int>> listOfNoScores = new List<KeyValuePair<string, int>>();
             List<KeyValuePair<string, int>> listOfScores = new List<KeyValuePair<string, int>>();
 
             listOfScores = FindWinConditionTwoOfThree(computerPiece);
@@ -478,7 +519,6 @@ namespace TicTacTosh
             {
                 if (score.Value == 0)
                 {
-                    listOfNoScores.Add(score);
                     continue;
                 }
 
@@ -494,20 +534,36 @@ namespace TicTacTosh
                     listOfHighScores.Add(score);
                 }
             }
+            ComputerBestMove = null;
+            int randomIndex = -1;
 
-            Random rnd = new Random();
-            int randomIndex = rnd.Next(listOfHighScores.Count());
+            if (listOfHighScores.Count() != 0)
+            {
+                randomIndex = rnd.Next(listOfHighScores.Count());
+                ComputerBestMove = listOfHighScores[randomIndex].Key;
+            }
 
-            if (listOfNoScores.Count() == 9)
+            if(ComputerBestMove != null)
+            {
+                Position = Board.Where(x => x.Key == ComputerBestMove).Single();
+                ComputerBestMove = null;
+                return;
+            }
+            else
             {
                 // no win conditions so far in the game, have to choose a different way to select next best move
 
                 listOfHighScores.Clear();
+                baseScore = 0;
                 listOfScores = FindWinConditionOneOfThree(computerPiece);
-                //listOfNoScores = new List<KeyValuePair<string, int>>();
 
                 foreach (var score in listOfScores)
                 {
+                    if (score.Value == 0)
+                    {
+                        continue;
+                    }
+
                     if (score.Value != 0 && score.Value == baseScore)
                     {
                         listOfHighScores.Add(score);
@@ -521,46 +577,31 @@ namespace TicTacTosh
                     }
                 }
 
-                baseScore = 0;
-
-                foreach (var score in listOfHighScores)
+                if (listOfHighScores.Count() != 0)
                 {
-                    if (score.Value > baseScore)
-                    {
-                        baseScore = score.Value;
-                        BestMove = score.Key;
-                    }
+                    randomIndex = rnd.Next(listOfHighScores.Count());
+                    ComputerGoodMove = listOfHighScores[randomIndex].Key;
                 }
-
-                randomIndex = rnd.Next(listOfHighScores.Count());
             }
 
-            if (BestMove == null)
+            if (ComputerGoodMove == null)
             {
-                if (randomIndex == 0)
-                {
-                    avaliableSpaces = GetAvaliableSpaces();
-                    Position = ChooseRandomPosition(avaliableSpaces);
-                    return;
-                }
-
-                BestMove = listOfHighScores[randomIndex].Key;
+                avaliableSpaces = GetAvaliableSpaces();
+                ComputerRandomPosition = ChooseRandomPosition(avaliableSpaces).Key;
             }
 
             //if user move will win then take this place instead of the best move
-            UserBestMove = "none";
+            UserBestMove = null;
             List<KeyValuePair<string, int>> listOfUserScores = new List<KeyValuePair<string, int>>();
             List<KeyValuePair<string, int>> listOfUserHighScores = new List<KeyValuePair<string, int>>();
-
-            List<KeyValuePair<string, int>> listOfUserNoScores = new List<KeyValuePair<string, int>>();
             int baseUserScore = 0;
+
             listOfUserScores = FindWinConditionTwoOfThree("user");
 
             foreach (var score in listOfUserScores)
             {
                 if (score.Value == 0)
                 {
-                    listOfUserNoScores.Add(score);
                     continue;
                 }
 
@@ -577,27 +618,85 @@ namespace TicTacTosh
                 }
             }
 
-            int randomIndexForUser = 0;
+            ComputerBestMove = null;
+            randomIndex = -1;
 
-            if (listOfUserNoScores.Count() != 9)
+            if (listOfUserHighScores.Count() != 0)
             {
-                randomIndexForUser = rnd.Next(listOfUserHighScores.Count());
+                randomIndex = rnd.Next(listOfUserHighScores.Count());
+                UserBestMove = listOfUserHighScores[randomIndex].Key;
+            }
 
-                UserBestMove = listOfUserHighScores[randomIndexForUser].Key;
+            if (UserBestMove != null)
+            {
+                Position = Board.Where(x => x.Key == UserBestMove).Single();
+                UserBestMove = null;
+                return;
+            }
+            else
+            {
+                // no win conditions so far in the game, have to choose a different way to select next best move
 
-                if (!UserBestMove.Equals("none"))
+                listOfUserHighScores.Clear();
+                baseUserScore = 0;
+                listOfUserScores = FindWinConditionOneOfThree("user");
+
+                foreach (var score in listOfUserScores)
                 {
-                    BestMove = UserBestMove;
+                    if (score.Value == 0)
+                    {
+                        continue;
+                    }
+
+                    if (score.Value != 0 && score.Value == baseUserScore)
+                    {
+                        listOfUserHighScores.Add(score);
+                    }
+
+                    if (score.Value > baseUserScore)
+                    {
+                        listOfUserHighScores.Clear();
+                        baseUserScore = score.Value;
+                        listOfUserHighScores.Add(score);
+                    }
                 }
-            }
-            
-            if (!UserBestMove.Equals("none"))
-            {
-                BestMove = UserBestMove;
+
+                if (listOfUserHighScores.Count() != 0)
+                {
+                    int randomIndexForUser = rnd.Next(listOfUserHighScores.Count());
+                    UserGoodMove = listOfUserHighScores[randomIndexForUser].Key;
+                }                
             }
 
-            Position = Board.Where(x => x.Key == BestMove).Single();
-            BestMove = null;
+            if (ComputerBestMove != null)
+            {
+                Position = Board.Where(x => x.Key == ComputerBestMove).Single();
+            }
+            else if (UserBestMove != null)
+            {
+                Position = Board.Where(x => x.Key == UserBestMove).Single();
+            }
+            else if (ComputerGoodMove == UserGoodMove)
+            {
+                Position = Board.Where(x => x.Key == ComputerGoodMove).Single();
+            }
+            else if (ComputerGoodMove != null)
+            {
+                Position = Board.Where(x => x.Key == ComputerGoodMove).Single();
+            }
+            else if (ComputerGoodMove == null && UserGoodMove != null)
+            {
+                Position = Board.Where(x => x.Key == UserGoodMove).Single();
+            }
+            else
+            {
+                Position = Board.Where(x => x.Key == ComputerRandomPosition).Single();
+            }
+
+            ComputerBestMove = null;
+            UserBestMove = null;
+            ComputerGoodMove = null;
+            UserGoodMove = null;
         }
 
         public static void AskAndSetName()
