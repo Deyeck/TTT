@@ -201,7 +201,7 @@ namespace TicTacTosh
             //  | |
             //  |x|
             //  | |x
-            if (boardValues[0].Value == "" && boardValues[4].Value == piece && boardValues[8].Value == piece)
+            if (boardValues[0].Value == " " && boardValues[4].Value == piece && boardValues[8].Value == piece)
             {
                 leftTop++;
             }
@@ -1001,15 +1001,15 @@ namespace TicTacTosh
         {
             Board = new List<KeyValuePair<string, string>>()
             {
-                new KeyValuePair<string, string>("LT", " "),
-                new KeyValuePair<string, string>("CT", " "),
-                new KeyValuePair<string, string>("RT", " "),
+                new KeyValuePair<string, string>("LT", "x"),
+                new KeyValuePair<string, string>("CT", "O"),
+                new KeyValuePair<string, string>("RT", "X"),
                 new KeyValuePair<string, string>("LM", " "),
-                new KeyValuePair<string, string>("CM", " "),
-                new KeyValuePair<string, string>("RM", " "),
-                new KeyValuePair<string, string>("LB", " "),
-                new KeyValuePair<string, string>("CB", " "),
-                new KeyValuePair<string, string>("RB", " ")
+                new KeyValuePair<string, string>("CM", "X"),
+                new KeyValuePair<string, string>("RM", "O"),
+                new KeyValuePair<string, string>("LB", "O"),
+                new KeyValuePair<string, string>("CB", "X"),
+                new KeyValuePair<string, string>("RB", "O")
             };
 
             return Board;
